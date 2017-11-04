@@ -82,14 +82,7 @@ Shader::Shader(const GLchar *vertexPath, const GLchar *fragmentPath) {
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 }
-float i = 0;
-void Shader::Use()
-{
-//    GLuint offset = glGetUniformLocation(Program,"offset");
-//    if(i <= 1){
-//        i += 0.001f;
-//    }
-//    glUniform1f(offset,i);
+void Shader::Use() {
     glUseProgram(this->Program);
 
 }
