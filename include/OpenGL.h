@@ -27,7 +27,7 @@ private:
     int width,height;
     Shader* shader;
     GLuint texture1,texture2;
-    GLuint VAO;
+    GLuint VAO,lightVAO;
     unsigned long start_t;
     GLfloat deltaTime = 0.0f;   // 当前帧遇上一帧的时间差
     GLfloat lastFrame = 0.0f;   // 上一帧的时间

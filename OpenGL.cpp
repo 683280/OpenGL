@@ -73,7 +73,7 @@ OpenGL::OpenGL(int width,int height) {
     glViewport(0, 0, width, height);
 
     glEnable(GL_DEPTH_TEST);
-    shader = new Shader("../vertexShader.glsl","../fragmentShader.glsl");
+    shader = new Shader("../glsl/vertexShader.glsl","../glsl/fragmentShader.glsl");
 
 
     GLuint VBO;
@@ -87,13 +87,16 @@ OpenGL::OpenGL(int width,int height) {
     //0
     glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,5 * sizeof(GLfloat),(GLvoid*)0);
     glEnableVertexAttribArray(0);
-    //1
-//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3* sizeof(GLfloat)));
-//    glEnableVertexAttribArray(1);
-    //2
+
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3* sizeof(GLfloat)));
     glEnableVertexAttribArray(2);
 
+    glBindVertexArray(0);
+    glGenVertexArrays(1,&lightVAO);
+    glBindVertexArray(lightVAO);
+    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
     glBindVertexArray(0);
     //texture
     glGenTextures(1,&texture1);
@@ -114,6 +117,7 @@ OpenGL::OpenGL(int width,int height) {
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
     glBindTexture(GL_TEXTURE_2D, 0);
+
 //    glTextureParameteri(texture1,GL_TEXTURE_WRAP_S,GL_REPEAT);
 //    glTextureParameteri(texture1,GL_TEXTURE_WRAP_T,GL_REPEAT);
 //    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -166,19 +170,14 @@ void OpenGL::draw() {
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
     // Note: currently we set the projection matrix each frame, but since the projection matrix rarely changes it's often best practice to set it outside the main loop only once.
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    for(GLuint i = 0; i < 10; i++)
-    {
-        glm::mat4 model;
-        model = glm::translate(model, cubePositions[i]);
-        GLfloat angle = 20.0f * i;
-        model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
+    glBindVertexArray(lightVAO);
+    glm::translate(model,glm::vec3(1.0,0.0,-1.0));
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
     glBindVertexArray(0);
 }
 
