@@ -70,10 +70,13 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 
 int glfw_main(int WIDTH, int HEIGHT) {
     glfwInit();
+    //使用Opengl 3.3以上
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    //创建窗口
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "GLFW OpenGL", nullptr, nullptr);
 
     if (window == nullptr)
@@ -89,6 +92,7 @@ int glfw_main(int WIDTH, int HEIGHT) {
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetKeyCallback(window, key_callback);
+
     openGL = new OpenGL(width,height);
     while (!glfwWindowShouldClose(window)){
         glfwPollEvents();

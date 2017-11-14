@@ -4,8 +4,12 @@
 
 #include <ctime>
 #include "OpenGL.h"
-#include <afxres.h>
+
 #include <GLFW/glfw3.h>
+#include <sys/time.h>
+#ifdef WIN32
+#include <afxres.h>
+#endif
 
 GLfloat vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -62,18 +66,30 @@ glm::vec3 cubePositions[] = {
         glm::vec3( 1.5f,  0.2f, -1.5f),
         glm::vec3(-1.3f,  1.0f, -1.5f)
 };
+long get_unix_time(){
+#ifdef WIN32
+    return GetTickCount();
+#else MAC
+    struct timeval t;
+    gettimeofday(&t,NULL);
+    return t.tv_sec * 1000 + t.tv_usec / 1000;
+#endif
+}
 OpenGL::OpenGL(int width,int height) {
-    start_t = GetTickCount();
+
+    start_t = get_unix_time();
+    this->width = width;
+    this->height = height;
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
     {
         std::cout << "Failed to initialize GLEW" << std::endl;
         return;
     }
+    std::cout << glGetString(GL_VERSION) << std::endl;
     glViewport(0, 0, width, height);
-
     glEnable(GL_DEPTH_TEST);
-    shader = new Shader("../glsl/vertexShader.glsl","../glsl/fragmentShader.glsl");
+    shader = new Shader("./glsl/vertexShader.glsl","./glsl/fragmentShader.glsl");
 
 
     GLuint VBO;
@@ -104,7 +120,7 @@ OpenGL::OpenGL(int width,int height) {
     glBindTexture(GL_TEXTURE_2D,texture1);
     glUniform1i(glGetUniformLocation(shader->Program, "ourTexture1"), 0);
     int width1, height1;
-    unsigned char* image = SOIL_load_image("../container.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
+    unsigned char* image = SOIL_load_image("./container.jpg", &width1, &height1, 0, SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D,0,GL_RGB,width1,height1,0,GL_RGB,GL_UNSIGNED_BYTE,image);
     glGenerateMipmap(GL_TEXTURE_2D);
     SOIL_free_image_data(image);
@@ -183,8 +199,8 @@ void OpenGL::draw() {
 
 double OpenGL::get_time(){
     unsigned long t;
-    t = GetTickCount();
+    t = get_unix_time();
 
-    double time = (t - start_t) / 1000.0d;
+    double time = (t - start_t) / 1000.0;
     return time;
 }
