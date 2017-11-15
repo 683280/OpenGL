@@ -7,6 +7,7 @@
 
 #include <GLFW/glfw3.h>
 #include <sys/time.h>
+
 #ifdef WIN32
 #include <afxres.h>
 #endif
@@ -69,7 +70,7 @@ glm::vec3 cubePositions[] = {
 long get_unix_time(){
 #ifdef WIN32
     return GetTickCount();
-#else MAC
+#else __APPLE__
     struct timeval t;
     gettimeofday(&t,NULL);
     return t.tv_sec * 1000 + t.tv_usec / 1000;
@@ -80,6 +81,7 @@ OpenGL::OpenGL(int width,int height) {
     start_t = get_unix_time();
     this->width = width;
     this->height = height;
+    camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK)
     {
@@ -145,15 +147,14 @@ void OpenGL::do_movement() {
     deltaTime = currTime - lastFrame;
     lastFrame = currTime;
     // 摄像机控制
-    GLfloat cameraSpeed = 5.0f * deltaTime;
-    if(keys[GLFW_KEY_W])
-        cameraPos += cameraSpeed * cameraFront;
-    if(keys[GLFW_KEY_S])
-        cameraPos -= cameraSpeed * cameraFront;
-    if(keys[GLFW_KEY_A])
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    if(keys[GLFW_KEY_D])
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if(keys[FORWARD])
+        camera->ProcessKeyboard(FORWARD, deltaTime);
+    if(keys[BACKWARD])
+        camera->ProcessKeyboard(BACKWARD, deltaTime);
+    if(keys[LEFT])
+        camera->ProcessKeyboard(LEFT, deltaTime);
+    if(keys[RIGHT])
+        camera->ProcessKeyboard(RIGHT, deltaTime);
 }
 void OpenGL::draw() {
     do_movement();
@@ -175,9 +176,9 @@ void OpenGL::draw() {
     glm::mat4 view;
     glm::mat4 projection;
 
-    view = glm::lookAt(cameraPos, cameraFront + cameraPos, cameraUp);
+    view = camera->GetViewMatrix();
 
-    projection = glm::perspective(fov, (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(camera->Zoom), (GLfloat)width / (GLfloat)height, 0.1f, 100.0f);
     // Get their uniform location
     GLint modelLoc = glGetUniformLocation(shader->Program, "model");
     GLint viewLoc = glGetUniformLocation(shader->Program, "view");

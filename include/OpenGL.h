@@ -11,14 +11,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <SOIL.h>
+#include <Camera.h>
 
 class OpenGL {
 public:
-    glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
-    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
-    GLfloat fov =  45.0f;
+//    glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+//    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+//    glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+//    GLfloat fov =  45.0f;
     bool keys[1024];
+    Camera* camera ;
 public:
     OpenGL(int width,int height);
     void draw();
