@@ -2,6 +2,7 @@
 // Created by 13342 on 2017/10/20.
 //
 
+
 #include "Shader.h"
 
 Shader::Shader(const GLchar *vertexPath, const GLchar *fragmentPath) {
@@ -82,6 +83,19 @@ Shader::Shader(const GLchar *vertexPath, const GLchar *fragmentPath) {
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 }
+void Shader::setVec3(const char* name,float x,float y,float z){
+    auto location = glGetUniformLocation(Program,name);
+    glUniform3f(location,x,y,z);
+}
+void Shader::setVec3(const char* name,glm::vec3 vec3){
+    auto location = glGetUniformLocation(Program,name);
+    glUniform3fv(location,1,glm::value_ptr(vec3));
+}
+void Shader::setMat4(const GLchar* name,glm::mat4 m){
+    auto location = glGetUniformLocation(Program,name);
+    glUniformMatrix4fv(location,1,GL_FALSE,glm::value_ptr(m));
+}
+
 void Shader::Use() {
     glUseProgram(this->Program);
 

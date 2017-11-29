@@ -28,6 +28,7 @@ public:
 private:
     int width,height;
     Shader* shader;
+    Shader* light_shader;
     GLuint texture1,texture2;
     GLuint VAO,lightVAO;
     unsigned long start_t;

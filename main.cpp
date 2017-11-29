@@ -25,7 +25,7 @@ int WinMain(HINSTANCE hInstance,      // handle to current instance
 int main(){
     int width = 800;
     int height = 600;
-    sdl_main(width, height);    //SDL2
-//    glfw_main(width,height);  //GLFW
+//    sdl_main(width, height);    //SDL2
+    glfw_main(width,height);  //GLFW
 }
 #endif
